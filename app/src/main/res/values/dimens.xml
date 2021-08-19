@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="card_margin">30dp</dimen>
+    <dimen name="activity_horizontal_half_margin">4dp</dimen>
+    <dimen name="standard_margin">16dp</dimen>
+    <dimen name="edit_text_height">50dp</dimen>
+    <integer name="recycler_view_span">1</integer>
+</resources>

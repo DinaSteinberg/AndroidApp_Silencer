@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/card_margin">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_addresses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/activity_horizontal_half_margin"
+        android:paddingRight="@dimen/activity_horizontal_half_margin"
+        android:paddingBottom="@dimen/activity_horizontal_half_margin"
+        tools:ignore="RtlSymmetry"
+        tools:layoutManager="GridLayoutManager"
+        tools:listitem="@layout/main_include_input_box"
+        tools:spanCount= "1" />
+
+</com.google.android.material.card.MaterialCardView>
