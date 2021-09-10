@@ -4,13 +4,14 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/standard_margin"
-    android:paddingBottom="@dimen/edit_text_height"
+    android:layout_marginBottom="@dimen/edit_text_height"
+    app:cardCornerRadius="25dp"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical">♦
 
         <TextView
             android:background="@color/primaryColor"
@@ -21,7 +22,7 @@
             android:gravity="center_horizontal"
             android:padding="@dimen/standard_margin"
             android:textColor="@color/design_default_color_on_primary"
-            android:text="Enter the address below"
+            android:text="@string/enter_the_address_below"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
 
         </TextView>

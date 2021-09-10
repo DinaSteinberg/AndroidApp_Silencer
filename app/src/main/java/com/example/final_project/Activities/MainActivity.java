@@ -1,7 +1,6 @@
-package com.example.final_project;
+package com.example.final_project.Activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,22 +20,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import androidx.core.app.ActivityCompat;
-import androidx.navigation.ui.AppBarConfiguration;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.final_project.Adapters.SilencerAdapter;
-import com.example.final_project.databinding.ActivityMainBinding;
+import com.example.final_project.Models.AddressItem;
+import com.example.final_project.R;
+import com.example.final_project.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,20 +45,19 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
-
     //for location
-    TextView location_txt;
     Double latitude = 0.0;
     Double longitude = 0.0;
     private FusedLocationProviderClient fusedLocationClient;
     AddressItem currentLocation;
-    AddressItem enteredLocation;
 
     //For permissions
     private final int REQUEST_CODE = 5;
-    private final String ADDRESS_KEY = "Key_List";
+
+    //Keys
+    private final String mkey_address = "ADDRESS_LIST";
+    private final String mkey_silent = "SILENT";
+    private final String mkey_vibrate = "VIBRATE";
 
     //For the audio
     AudioManager am;
@@ -70,17 +68,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        toStart();
         Toolbar toolbar = setupViews();
         setSupportActionBar(toolbar);
 
         mItems = savedInstanceState == null ? new ArrayList<>() :
-                AddressItem.getListFromGSONString(savedInstanceState.getString(ADDRESS_KEY));
+                AddressItem.getListFromGSONString(savedInstanceState.getString(mkey_address));
 
         restoreFromPreferences();
         createFirstBox();
         setupAdapter(savedInstanceState);
         setupFAB();
 
+    }
+
+    private void toStart() {
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
+        Utils.setNightModeOnOffFromPreferenceValue(getApplicationContext(), getString(R.string.night_mode_key));
     }
 
     private void createFirstBox() {
@@ -111,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar setupViews() {
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        return toolbar;
+        return findViewById(R.id.toolbar);
     }
 
     private void addNewItem() {
@@ -128,15 +131,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveListToPreferences() {
-        SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = defaultSharedPreferences.edit();
-        editor.putString(ADDRESS_KEY, AddressItem.getGSONStringFromList(mItems));
+        SharedPreferences.Editor editor = createPrefsEditor();
+        editor.putString(mkey_address, AddressItem.getGSONStringFromList(mItems));
         editor.apply();
     }
 
     private void restoreFromPreferences() {
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
-        String addressString = defaultSharedPreferences.getString(ADDRESS_KEY, null);
+        String addressString = defaultSharedPreferences.getString(mkey_address, null);
         if (addressString != null) {
             mItems = AddressItem.getListFromGSONString(addressString);
         }
@@ -145,13 +147,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ADDRESS_KEY, AddressItem.getGSONStringFromList(mItems));
+        outState.putString(mkey_address, AddressItem.getGSONStringFromList(mItems));
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mItems = AddressItem.getListFromGSONString(savedInstanceState.getString(ADDRESS_KEY));
+        mItems = AddressItem.getListFromGSONString(savedInstanceState.getString(mkey_address));
     }
 
 
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermissionRationale() {
-        showInfoDialog(MainActivity.this, "Request Permissions",
+        Utils.showInfoDialog(MainActivity.this, "Request Permissions",
                 "We need to access your location to run this app. Please enable access.");
     }
 
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLocation();
             } else {
-                showInfoDialog(MainActivity.this, "App Unable to run",
+                Utils.showInfoDialog(MainActivity.this, "App Unable to run",
                         "This app is unable to run without the permissions enabled.");
             }
         }
@@ -267,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             showSettings();
             return true;
         } else if (id == R.id.action_about) {
-            showInfoDialog(this, "About this app", "This app can turn your phone on silent or " +
+            Utils.showInfoDialog(this, "About this app", "This app can turn your phone on silent or " +
                     "vibrate when you reach a certain destination. It's very helpful for meetings, study sessions, or" +
                     "a special distraction free place. No more unexpected ringing when your phone was supposed to be on silent.");
         } else if (id == R.id.action_saved_items) {
@@ -277,58 +279,45 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSavedItems() {
-    }
-
     private void showSettings() {
         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
         startActivityForResult(intent, 1);
     }
 
+    private void showSavedItems() {
+        Intent intent = new Intent(getApplicationContext(), SavedAddressesActivity.class);
+        intent.putExtra(mkey_address, AddressItem.getGSONStringFromList(mItems));
+        startActivity(intent);
+    }
 
-    /**
-     * Shows an Android (nicer) equivalent to JOptionPane
-     *
-     * @param strTitle Title of the Dialog box
-     * @param strMsg   Message (body) of the Dialog box
-     */
-    public static void showInfoDialog(Context context, String strTitle, String strMsg) {
-        // create the listener for the dialog
-        final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
 
-        // Create the AlertDialog.Builder object
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-
-        // Use the AlertDialog's Builder Class methods to set the title, icon, message, et al.
-        // These could all be chained as one long statement, if desired
-        alertDialogBuilder.setTitle(strTitle);
-        alertDialogBuilder.setIcon(R.mipmap.ic_launcher);
-        alertDialogBuilder.setMessage(strMsg);
-        alertDialogBuilder.setCancelable(true);
-        alertDialogBuilder.setNeutralButton(context.getString(android.R.string.ok), listener);
-
-        // Create and Show the Dialog
-        alertDialogBuilder.show();
+    private SharedPreferences.Editor createPrefsEditor() {
+        SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
+        return defaultSharedPreferences.edit();
     }
 
     public void makeSilent(View view) {
+        //update preferences
+        SharedPreferences.Editor editor = createPrefsEditor();
+        editor.putBoolean(mkey_silent, true);
+        editor.apply();
+
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         int position = Integer.parseInt((String) view.getTag());
         AddressItem currentItem = mItems.get(position);
-        while (currentItem.equals(currentItem)) am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        while (currentItem.equals(currentLocation)) am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
     }
 
     public void makeVibrate(View view) {
+        //update preferences
+        SharedPreferences.Editor editor = createPrefsEditor();
+        editor.putBoolean(mkey_vibrate, true);
+        editor.apply();
+
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         int position = Integer.parseInt((String) view.getTag());
         AddressItem currentItem = mItems.get(position);
-        while (currentItem.equals(currentItem)) am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        while (currentItem.equals(currentLocation)) am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
     }
-
 
 }

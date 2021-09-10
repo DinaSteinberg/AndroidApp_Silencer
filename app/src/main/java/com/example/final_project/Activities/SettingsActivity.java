@@ -1,4 +1,4 @@
-package com.example.final_project;
+package com.example.final_project.Activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
+import com.example.final_project.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

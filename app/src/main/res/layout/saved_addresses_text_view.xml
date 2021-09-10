@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<temp_root xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<com.google.android.material.card.MaterialCardView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_margin="@dimen/activity_horizontal_half_margin"
+    android:alpha=".9"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toBottomOf="@+id/background_image"
+    app:layout_constraintLeft_toLeftOf="@+id/background_image"
+    app:layout_constraintRight_toRightOf="@+id/background_image"
+    app:layout_constraintTop_toTopOf="@+id/background_image"
+    tools:showIn="@layout/content_saved_addresses">
 
-</temp_root>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/address_info_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="Hello, World"
+            android:textColor="@color/primaryDarkColor"
+            tools:showIn="@layout/activity_saved_addresses" />
+    </ScrollView>
+</com.google.android.material.card.MaterialCardView>

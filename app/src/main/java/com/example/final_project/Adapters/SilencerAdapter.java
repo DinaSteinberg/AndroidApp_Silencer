@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.final_project.AddressItem;
+import com.example.final_project.Models.AddressItem;
 import com.example.final_project.R;
 
 import java.util.ArrayList;

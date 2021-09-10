@@ -2,11 +2,6 @@
 
     <PreferenceCategory app:title="@string/night_mode_header">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/night_mode_title"
-            app:useSimpleSummaryProvider="true" />
-
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="@string/night_mode_key"
@@ -14,16 +9,30 @@
             app:summaryOn="@string/night_mode_on"
             app:title="@string/night_mode_title"/>
 
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/notifications_header">
-
         <SwitchPreferenceCompat
             app:title="@string/notifications_title"
             app:defaultValue="true"
             app:key="@string/notifications_key"
             app:summaryOff="@string/notifications_off"
             app:summaryOn="@string/notifications_on"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/audio_header">
+
+        <SwitchPreferenceCompat
+            app:title="@string/silent_title"
+            app:defaultValue="true"
+            app:key="SILENT"
+            app:summaryOff="@string/silent_summary_off"
+            app:summaryOn="@string/silent_summary_on"/>
+
+        <SwitchPreferenceCompat
+            app:title="@string/vibrate_title"
+            app:defaultValue="true"
+            app:key="VIBRATE"
+            app:summaryOff="@string/vibrate_summary_off"
+            app:summaryOn="@string/vibrate_summary_on"
+            />
 
     </PreferenceCategory>
 
