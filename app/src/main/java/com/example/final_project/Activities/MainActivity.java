@@ -1,6 +1,7 @@
 package com.example.final_project;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = setupViews();
         setSupportActionBar(toolbar);
 
-        mItems = savedInstanceState == null ? new ArrayList<>():
-        AddressItem.getListFromGSONString(savedInstanceState.getString(ADDRESS_KEY));
+        mItems = savedInstanceState == null ? new ArrayList<>() :
+                AddressItem.getListFromGSONString(savedInstanceState.getString(ADDRESS_KEY));
 
         restoreFromPreferences();
         createFirstBox();
@@ -83,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createFirstBox() {
-        if(mItems.size() == 0){
-           mItems.add(new AddressItem());
-       }
+        if (mItems.size() == 0) {
+            mItems.add(new AddressItem());
+        }
     }
 
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addNewItem() {
         mItems.add(new AddressItem());
-        mAdapter.notifyItemInserted (mItems.size()-1);
+        mAdapter.notifyItemInserted(mItems.size() - 1);
 
     }
 
@@ -130,20 +131,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = defaultSharedPreferences.edit();
         editor.putString(ADDRESS_KEY, AddressItem.getGSONStringFromList(mItems));
+        editor.apply();
     }
 
     private void restoreFromPreferences() {
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(this);
-        if (defaultSharedPreferences.getBoolean(ADDRESS_KEY,true)) {
-            String addressString = defaultSharedPreferences.getString(ADDRESS_KEY, null);
-            if (addressString!=null) {
-                mItems = AddressItem.getListFromGSONString(addressString);
-            }
+        String addressString = defaultSharedPreferences.getString(ADDRESS_KEY, null);
+        if (addressString != null) {
+            mItems = AddressItem.getListFromGSONString(addressString);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull  Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ADDRESS_KEY, AddressItem.getGSONStringFromList(mItems));
     }
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), e.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -266,13 +266,18 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             showSettings();
             return true;
-        }else if(id == R.id.action_about){
-            showInfoDialog(this,"About this app","This app can turn your phone on silent or " +
+        } else if (id == R.id.action_about) {
+            showInfoDialog(this, "About this app", "This app can turn your phone on silent or " +
                     "vibrate when you reach a certain destination. It's very helpful for meetings, study sessions, or" +
                     "a special distraction free place. No more unexpected ringing when your phone was supposed to be on silent.");
+        } else if (id == R.id.action_saved_items) {
+            showSavedItems();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSavedItems() {
     }
 
     private void showSettings() {
@@ -315,16 +320,15 @@ public class MainActivity extends AppCompatActivity {
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         int position = Integer.parseInt((String) view.getTag());
         AddressItem currentItem = mItems.get(position);
-        while (currentItem.equals(currentItem))am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        while (currentItem.equals(currentItem)) am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
     }
 
     public void makeVibrate(View view) {
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         int position = Integer.parseInt((String) view.getTag());
         AddressItem currentItem = mItems.get(position);
-        while (currentItem.equals(currentItem))am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        while (currentItem.equals(currentItem)) am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
     }
-
 
 
 }
